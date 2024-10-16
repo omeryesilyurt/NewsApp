@@ -27,9 +27,11 @@
         >
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnGeneral"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_general"
+            android:background="@drawable/selected_button_bg"
             android:layout_weight="1" />
 
         <Space
@@ -42,9 +44,11 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_sport"
+            android:background="@drawable/default_button_bg"
             android:layout_weight="1"/>
 
         <Space
@@ -57,9 +61,11 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnEconomy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_economy"
+            android:background="@drawable/default_button_bg"
             android:layout_weight="1"/>
 
         <Space
@@ -72,9 +78,11 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnTechnology"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_technology"
+            android:background="@drawable/default_button_bg"
             android:layout_weight="1"/>
 
     </LinearLayout>
@@ -89,7 +97,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_news"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

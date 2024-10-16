@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("org.jetbrains.kotlin.kapt")
-
+    alias(libs.plugins.navigationSafeArgs)
 }
 
 android {
@@ -78,6 +78,8 @@ dependencies {
     implementation(libs.lifecycleLivedataKtx)
     implementation(libs.coroutines)
     implementation(libs.glide)
+    implementation(libs.navigation.ui)
+    implementation(libs.navigation.fragment)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

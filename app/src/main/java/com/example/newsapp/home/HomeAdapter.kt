@@ -14,7 +14,10 @@ import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.model.NewsModel
 
-class HomeAdapter(private var itemList: List<NewsModel>) :
+class HomeAdapter(
+    private var itemList: List<NewsModel>,
+    private val onItemClick: (NewsModel) -> Unit
+) :
     RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -35,7 +38,21 @@ class HomeAdapter(private var itemList: List<NewsModel>) :
         holder.textView.text = itemList[position].name
         holder.textViewSource.text = itemList[position].source
         holder.textViewDescription.text = itemList[position].description
-        holder.imageView.setImageResource(R.drawable.news) // TODO şimdilik local görsel kullanıldı daha sonra servisten gelen görsel kullanılacak
+        loadImage(itemList[position] ,holder.imageView)
+        holder.itemView.setOnClickListener {
+            onItemClick(itemList[position])
+        }
+    }
+
+    private fun loadImage(newsItem: NewsModel, imageView: ImageView) {
+        if (!newsItem.image.isNullOrEmpty()) {
+            Glide.with(imageView.context)
+                .load(newsItem.image)
+                .placeholder(R.drawable.news)
+                .into(imageView)
+        } else {
+            imageView.setImageResource(R.drawable.news)
+        }
     }
 
     override fun getItemCount(): Int {

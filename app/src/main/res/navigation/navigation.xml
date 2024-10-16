@@ -8,6 +8,14 @@
         android:id="@+id/homeFragment"
         android:name="com.example.newsapp.home.HomeFragment"
         android:label="HomeFragment" >
+        <action
+            android:id="@+id/actionHomeFragmentToDetailFragment"
+            app:destination="@id/detailFragment"/>
+        <argument
+            android:name="selectedNewsId"
+            app:argType="string"
+        />
+
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -18,4 +26,8 @@
         android:id="@+id/favoritesFragment"
         android:name="com.example.newsapp.favorites.FavoritesFragment"
         android:label="FavoritesFragment" />
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.newsapp.detail.DetailFragment"
+        android:label="DetailFragment" />
 </navigation>
