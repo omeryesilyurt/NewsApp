@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/layout_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/layoutCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:weightSum="4"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_general"
+            android:layout_weight="1" />
+
+        <Space
+            android:id="@+id/firstSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_sport"
+            android:layout_weight="1"/>
+
+        <Space
+            android:id="@+id/secondSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_economy"
+            android:layout_weight="1"/>
+
+        <Space
+            android:id="@+id/thirdSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_technology"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvNews"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/layoutCategories"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_news"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
