@@ -29,5 +29,9 @@
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.example.newsapp.detail.DetailFragment"
-        android:label="DetailFragment" />
+        android:label="DetailFragment" >
+        <action
+            android:id="@+id/actionDetailFragmentToHomeFragment"
+            app:destination="@id/homeFragment"/>
+    </fragment>
 </navigation>

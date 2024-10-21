@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentDetailBinding
@@ -35,6 +36,10 @@ class DetailFragment : Fragment() {
         if (news != null) {
             loadImage(news, binding.imgDetailNews)
         }
+        binding.toolbar.btnBack.setOnClickListener {
+            findNavController().navigate(R.id.actionDetailFragmentToHomeFragment)
+        }
+        binding.toolbar.tvTitle.text = getText(R.string.title_home)
     }
 
     private fun loadImage(newsItem: NewsModel, imageView: AppCompatImageView) {

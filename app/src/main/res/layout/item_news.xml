@@ -22,7 +22,8 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgNews"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
                 tools:src="@drawable/news"
                 android:scaleType="fitXY"/>
 
@@ -30,14 +31,10 @@
                 android:id="@+id/btnFav"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_mark"
                 android:layout_gravity="end|top"
-                android:background="@android:color/transparent"
+                android:background="@drawable/cb_fav_selector"
                 android:adjustViewBounds="true"
-                android:maxWidth="25dp"
-                android:maxHeight="25dp"
                 android:scaleType="fitXY"/>
-
         </FrameLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -45,7 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
-            android:text="WEBTEKNO"/>
+            android:fontFamily="@font/montserrat"
+            tools:text="WEBTEKNO"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvNewsTitle"
@@ -53,14 +51,16 @@
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:textStyle="bold"
-            android:text="Contrary to popular belief, Lorem Ipsum is not simply random text."/>
+            android:fontFamily="@font/montserrat"
+            tools:text="Contrary to popular belief, Lorem Ipsum is not simply random text."/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
-            android:text="There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text."/>
+            android:fontFamily="@font/montserrat"
+            tools:text="There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text."/>
 
     </LinearLayout>
 

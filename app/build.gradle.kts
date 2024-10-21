@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("org.jetbrains.kotlin.kapt")
     alias(libs.plugins.navigationSafeArgs)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -74,7 +75,8 @@ dependencies {
     implementation(libs.retrofitConverterGson)
     implementation(libs.room)
     implementation(libs.roomKtx)
-    annotationProcessor(libs.roomCompiler)
+    implementation(libs.androidx.fragment)
+    ksp(libs.roomCompiler)
     implementation(libs.lifecycleLivedataKtx)
     implementation(libs.coroutines)
     implementation(libs.glide)

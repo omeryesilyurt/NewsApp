@@ -9,6 +9,7 @@ class LocalRepository(context: Context) {
     private val newsDB = NewsDatabase.getInstance(context)
 
     val favoriteNewsList: List<NewsModel>? = newsDB?.NewsDao()?.getAllFavoriteNews()
+    private val newsDatabase = NewsDatabase.getInstance(context)!!
 
     fun add(news: NewsModel) {
         newsDB?.NewsDao()?.addFavorite(news)
@@ -20,5 +21,10 @@ class LocalRepository(context: Context) {
 
     fun getFavoriteList(news: NewsModel) {
         newsDB?.NewsDao()?.getAllFavoriteNews()
+    }
+
+    fun isFavorite(newsId: Long): Boolean {
+        val favoriteNews = newsDatabase.NewsDao()?.getAllFavoriteNews()
+        return favoriteNews?.any { it.id == newsId } == true
     }
 }
