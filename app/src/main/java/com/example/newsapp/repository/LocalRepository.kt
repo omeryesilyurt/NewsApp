@@ -8,9 +8,6 @@ import com.example.newsapp.model.NewsModel
 class LocalRepository(context: Context) {
     private val newsDB = NewsDatabase.getInstance(context)
 
-    val favoriteNewsList: List<NewsModel>? = newsDB?.NewsDao()?.getAllFavoriteNews()
-    private val newsDatabase = NewsDatabase.getInstance(context)!!
-
     fun add(news: NewsModel) {
         newsDB?.NewsDao()?.addFavorite(news)
     }
@@ -19,12 +16,18 @@ class LocalRepository(context: Context) {
         newsDB?.NewsDao()?.removeFavorite(news.id)
     }
 
-    fun getFavoriteList(news: NewsModel) {
-        newsDB?.NewsDao()?.getAllFavoriteNews()
+    fun getFavoriteList():List<NewsModel>? {
+       return newsDB?.NewsDao()?.getAllFavoriteNews()
     }
 
-    fun isFavorite(newsId: Long): Boolean {
-        val favoriteNews = newsDatabase.NewsDao()?.getAllFavoriteNews()
-        return favoriteNews?.any { it.id == newsId } == true
+    fun getFavoriteNews(newsList: List<NewsModel>): List<NewsModel> {
+        val favoriteNews = newsDB?.NewsDao()?.getAllFavoriteNews()
+        return if (favoriteNews != null) {
+            newsList.filter { newsItem ->
+                favoriteNews.any { it.key == newsItem.key }
+            }
+        } else {
+            emptyList() // Favori haberler boşsa boş bir liste döner
+        }
     }
 }

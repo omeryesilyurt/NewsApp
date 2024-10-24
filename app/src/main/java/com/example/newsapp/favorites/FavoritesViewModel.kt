@@ -1,5 +1,6 @@
 package com.example.newsapp.favorites
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,44 +14,28 @@ import retrofit2.Response
 
 class FavoritesViewModel(private val localRepository: LocalRepository) :ViewModel(){
 
-    val eventFetchNews = MutableLiveData<List<NewsModel>?>()
-    val eventShowProgress = MutableLiveData<Boolean>()
-    private var favoriteList: List<NewsModel>? = null
+    private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
+    val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
+    private val eventShowProgress = MutableLiveData<Boolean>()
 
 
     fun getData() {
         viewModelScope.launch(Dispatchers.IO) {
             eventShowProgress.postValue(true)
-
             try {
                 val response: Response<NewsResponseModel> = NetworkHelper.service.getNewsList("general")
                 if (response.isSuccessful) {
                     val newsResponse = response.body()
-                    localRepository.favoriteNewsList?.let { favoriteList ->
-                        val filteredList = filterList(newsResponse?.result ?: emptyList(), favoriteList)
-                        eventFetchNews.postValue(filteredList)
+                    newsResponse?.let { newsList ->
+                        val updatedNewsList = localRepository.getFavoriteNews(newsList.result)
+                        eventFetchNews.postValue(updatedNewsList)
                     } ?: run {
                         eventFetchNews.postValue(null)
                     }
-                } else {
-                    eventFetchNews.postValue(null)
                 }
             } catch (e: Exception) {
-                eventFetchNews.postValue(null)
-            } finally {
-                eventShowProgress.postValue(false)
+                println(e)
             }
         }
-    }
-
-    private fun filterList(newsList: List<NewsModel>, favorites: List<NewsModel>): List<NewsModel> {
-        for (favoriteItem in favorites) {
-            for (newsItem in newsList) {
-                if (favoriteItem.id == newsItem.id) {
-                    favoriteItem.isFavorite = true
-                }
-            }
-        }
-        return favorites
     }
 }

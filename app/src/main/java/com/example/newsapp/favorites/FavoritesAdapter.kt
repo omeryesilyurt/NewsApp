@@ -32,7 +32,7 @@ class FavoritesAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_news, parent, false)
         newsDatabase = NewsDatabase.getInstance(parent.context)!!
-        return FavoritesAdapter.ViewHolder(view)
+        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -40,6 +40,11 @@ class FavoritesAdapter(
         holder.textViewSource.text = itemList[position].source
         holder.textViewDescription.text = itemList[position].description
         loadImage(itemList[position] ,holder.imageView)
+        if (itemList[position].isFavorite == true) {
+            holder.favoriteButton.setImageResource(R.drawable.ic_mark_checked)
+        } else {
+            holder.favoriteButton.setImageResource(R.drawable.ic_mark_unchecked)
+        }
     }
 
     private fun loadImage(newsItem: NewsModel, imageView: ImageView) {
@@ -55,8 +60,7 @@ class FavoritesAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateList(itemList: List<NewsModel>?) {
-       // itemList.clear()
-        this.itemList = itemList as MutableList<NewsModel>
+        this.itemList = itemList?.toMutableList() ?: mutableListOf()
         this.notifyDataSetChanged()
     }
 
