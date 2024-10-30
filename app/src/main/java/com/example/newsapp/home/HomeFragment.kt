@@ -18,7 +18,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: HomeViewModel
-
     private lateinit var adapter: HomeAdapter
     private var newsList: MutableList<NewsModel> = mutableListOf()
     private var isNewsFetched = false
@@ -83,11 +82,11 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 putSerializable("selectedNews", selectedNews)
             }
             findNavController().navigate(action.actionId, bundle)
-        }, this, localRepository)
+        }, this)
         binding.rvNews.adapter = adapter
         binding.toolbar.tvTitle.text = getText(R.string.title_home)
         viewModel.eventFetchNews.observe(viewLifecycleOwner) { newsList ->
-            val mutableList: MutableList<NewsModel> = newsList.toMutableList()
+            val mutableList: MutableList<NewsModel> = newsList?.toMutableList() ?: mutableListOf()
             adapter.updateData(mutableList)
         }
 
@@ -145,9 +144,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
         otherButtons.forEach { it.setBackgroundResource(R.drawable.default_button_bg) }
     }
 
-    private val handleFetchData = Observer<MutableList<NewsModel>> {
-        adapter.updateData(it)
-    }
 
     override fun onAddOrRemoveFavorite(news: NewsModel, isAdd: Boolean) {
         viewModel.addOrRemove(news, isAdd)

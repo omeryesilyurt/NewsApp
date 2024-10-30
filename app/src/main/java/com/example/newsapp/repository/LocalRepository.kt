@@ -27,7 +27,7 @@ class LocalRepository(context: Context) {
                 favoriteNews.any { it.key == newsItem.key }
             }
         } else {
-            emptyList() // Favori haberler boşsa boş bir liste döner
+            emptyList()
         }
     }
 }

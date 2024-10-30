@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.database.NewsDatabase
+import com.example.newsapp.home.AddOrRemoveFavoriteListener
 import com.example.newsapp.model.NewsModel
 
 class FavoritesAdapter(
     private var itemList: MutableList<NewsModel> = mutableListOf(),
+    private val addOrRemoveFavoriteListener: AddOrRemoveFavoriteListener
 ) :
     RecyclerView.Adapter<FavoritesAdapter.ViewHolder>() {
     private lateinit var newsDatabase: NewsDatabase
@@ -40,10 +42,11 @@ class FavoritesAdapter(
         holder.textViewSource.text = itemList[position].source
         holder.textViewDescription.text = itemList[position].description
         loadImage(itemList[position] ,holder.imageView)
-        if (itemList[position].isFavorite == true) {
-            holder.favoriteButton.setImageResource(R.drawable.ic_mark_checked)
-        } else {
+        holder.favoriteButton.setImageResource(R.drawable.ic_mark_checked)
+        holder.favoriteButton.setOnClickListener {
             holder.favoriteButton.setImageResource(R.drawable.ic_mark_unchecked)
+            addOrRemoveFavoriteListener.onAddOrRemoveFavorite(itemList[position], false)
+            notifyItemChanged(position)
         }
     }
 

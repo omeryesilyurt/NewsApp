@@ -1,6 +1,5 @@
 package com.example.newsapp.favorites
 
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,18 +11,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
-class FavoritesViewModel(private val localRepository: LocalRepository) :ViewModel(){
+class FavoritesViewModel(private val localRepository: LocalRepository) : ViewModel() {
 
     private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
     private val eventShowProgress = MutableLiveData<Boolean>()
 
-
     fun getData() {
         viewModelScope.launch(Dispatchers.IO) {
             eventShowProgress.postValue(true)
             try {
-                val response: Response<NewsResponseModel> = NetworkHelper.service.getNewsList("general")
+                val response: Response<NewsResponseModel> =
+                    NetworkHelper.service.getNewsList("general")
                 if (response.isSuccessful) {
                     val newsResponse = response.body()
                     newsResponse?.let { newsList ->
@@ -36,6 +35,20 @@ class FavoritesViewModel(private val localRepository: LocalRepository) :ViewMode
             } catch (e: Exception) {
                 println(e)
             }
+        }
+    }
+
+
+    fun addOrRemove(news: NewsModel, isAdd: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isAdd) {
+                news.isFavorite = true
+                localRepository.add(news)
+            } else {
+                news.isFavorite = false
+                localRepository.remove(news)
+            }
+            _eventFetchNews.postValue(localRepository.getFavoriteList())
         }
     }
 }

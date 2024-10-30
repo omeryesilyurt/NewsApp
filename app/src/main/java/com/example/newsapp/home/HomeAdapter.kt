@@ -13,13 +13,11 @@ import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.database.NewsDatabase
 import com.example.newsapp.model.NewsModel
-import com.example.newsapp.repository.LocalRepository
 
 class HomeAdapter(
     private var itemList: MutableList<NewsModel>,
     private val onItemClick: (NewsModel) -> Unit,
     private val addOrRemoveFavoriteListener: AddOrRemoveFavoriteListener,
-    private val localRepository: LocalRepository
 ) :
     RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
     private lateinit var newsDatabase: NewsDatabase
@@ -44,7 +42,7 @@ class HomeAdapter(
         holder.textViewSource.text = itemList[position].source
         holder.textViewDescription.text = itemList[position].description
 
-        loadImage(itemList[position] ,holder.imageView)
+        loadImage(itemList[position], holder.imageView)
         holder.itemView.setOnClickListener {
             onItemClick(itemList[position])
         }

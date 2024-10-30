@@ -3,7 +3,6 @@ package com.example.newsapp.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.network.NetworkHelper
@@ -13,9 +12,9 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(private val localRepository: LocalRepository ) :
     ViewModel(){
-    val eventFetchNews = MutableLiveData<List<NewsModel>>()
+    private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
+    val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
     val eventShowProgress = MutableLiveData<Boolean>()
-    private var favoriteList: List<NewsModel>? = null
 
 
     fun fetchNews() {
@@ -64,22 +63,11 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
             if (isAdd) {
                 news.isFavorite = true
                 localRepository.add(news)
-            } else
+            } else{
                 news.isFavorite = false
                 localRepository.remove(news)
+            }
         }
     }
 
-    private fun filterList(newsList: List<NewsModel>): List<NewsModel> {
-        if (favoriteList != null) {
-            for (favoriteItem in favoriteList!!) {
-                for (newsItem in newsList) {
-                    if (favoriteItem.id == newsItem.id) {
-                        newsItem.isFavorite = true
-                    }
-                }
-            }
-        }
-        return newsList
-    }
 }
