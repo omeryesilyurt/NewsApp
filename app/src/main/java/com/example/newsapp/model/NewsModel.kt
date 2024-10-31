@@ -7,10 +7,13 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-@Entity(tableName = "dbNews",indices = [Index(value = ["key"], unique = true)])
+@Entity(tableName = "dbNews",indices = [Index(value = ["newsId"], unique = true)])
 data class NewsModel (
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val newsId: Int = 0,
+
+    @ColumnInfo(name = "id")
+    val id: Long ,
 
     @SerializedName("key")
     @ColumnInfo(name = "key")

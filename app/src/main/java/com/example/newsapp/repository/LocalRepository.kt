@@ -24,7 +24,7 @@ class LocalRepository(context: Context) {
         val favoriteNews = newsDB?.NewsDao()?.getAllFavoriteNews()
         return if (favoriteNews != null) {
             newsList.filter { newsItem ->
-                favoriteNews.any { it.key == newsItem.key }
+                favoriteNews.any { it.newsId == newsItem.newsId }
             }
         } else {
             emptyList()

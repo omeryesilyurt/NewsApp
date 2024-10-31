@@ -1,6 +1,8 @@
 package com.example.newsapp.home
 
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,10 +21,22 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
 
     fun fetchNews() {
         viewModelScope.launch(Dispatchers.IO) {
+            val favNews = localRepository.getFavoriteList()
             val response = NetworkHelper.service.getNewsList("general")
             response.body()?.let {
                 if (it.success) {
-                    eventFetchNews.postValue(it.result)
+                   val list = it.result
+                    if (favNews != null) {
+                        for (i in list) {
+                            val match2 = favNews.any { i.newsId == it.newsId}
+                            Log.i("newsId:","$it.newsId")
+                            if (match2) {
+                                i.isFavorite = true
+                            }
+                        }
+                    }
+                    //TODO kaydetme işlemini id ile yapmak gerekiyor fakat id auto generate olmuyor sabit 0 kalıyor.
+                    _eventFetchNews.postValue(list)
                 }
             }
         }
@@ -58,7 +72,7 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
         }
     }
 
-    fun addOrRemove(news: NewsModel, isAdd: Boolean) {
+    fun addOrRemove( news: NewsModel, isAdd: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             if (isAdd) {
                 news.isFavorite = true

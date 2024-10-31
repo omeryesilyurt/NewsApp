@@ -27,8 +27,6 @@ class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
         return binding.root
     }
 
-    //TODO Şuan ana ekrandaki favoriden çıkarma işlemi ile favori ekranındaki iletişim sağlanamıyor
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
