@@ -13,7 +13,7 @@ class LocalRepository(context: Context) {
     }
 
     fun remove(news: NewsModel) {
-        newsDB?.NewsDao()?.removeFavorite(news.id)
+        news.name?.let { newsDB?.NewsDao()?.removeFavorite(it) }
     }
 
     fun getFavoriteList():List<NewsModel>? {
@@ -24,7 +24,7 @@ class LocalRepository(context: Context) {
         val favoriteNews = newsDB?.NewsDao()?.getAllFavoriteNews()
         return if (favoriteNews != null) {
             newsList.filter { newsItem ->
-                favoriteNews.any { it.newsId == newsItem.newsId }
+                favoriteNews.any { it.name == newsItem.name }
             }
         } else {
             emptyList()

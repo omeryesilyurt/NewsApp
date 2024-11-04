@@ -10,6 +10,7 @@ import com.example.newsapp.repository.LocalRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.util.UUID
 
 class FavoritesViewModel(private val localRepository: LocalRepository) : ViewModel() {
 
@@ -41,6 +42,9 @@ class FavoritesViewModel(private val localRepository: LocalRepository) : ViewMod
 
     fun addOrRemove(news: NewsModel, isAdd: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (news.newsId == null) {
+                news.newsId = UUID.randomUUID()
+            }
             if (isAdd) {
                 news.isFavorite = true
                 localRepository.add(news)

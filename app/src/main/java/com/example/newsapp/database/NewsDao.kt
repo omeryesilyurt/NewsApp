@@ -15,7 +15,7 @@ interface NewsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addFavorite(favNews: NewsModel)
 
-    @Query("DELETE FROM dbNews WHERE id = :newsId")
-    fun removeFavorite(newsId: Long)
+    @Query("DELETE FROM dbNews WHERE name = :name")
+    fun removeFavorite(name: String)
 
 }

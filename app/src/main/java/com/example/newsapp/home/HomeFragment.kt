@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.newsapp.R
@@ -17,7 +16,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var homeViewModel: HomeViewModel
     private lateinit var adapter: HomeAdapter
     private var newsList: MutableList<NewsModel> = mutableListOf()
     private var isNewsFetched = false
@@ -36,8 +35,10 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val localRepository = LocalRepository(requireContext())
-        val factory = HomeViewModelFactory(localRepository)
-        viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
+        val homeViewModelFactory = HomeViewModelFactory(localRepository)
+        homeViewModel = ViewModelProvider(this, homeViewModelFactory)[HomeViewModel::class.java]
+        homeViewModel.fetchNews()
+
 
         when (selectedCategory) {
             "general" -> highlightButton(
@@ -85,15 +86,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
         }, this)
         binding.rvNews.adapter = adapter
         binding.toolbar.tvTitle.text = getText(R.string.title_home)
-        viewModel.eventFetchNews.observe(viewLifecycleOwner) { newsList ->
-            val mutableList: MutableList<NewsModel> = newsList?.toMutableList() ?: mutableListOf()
-            adapter.updateData(mutableList)
-        }
-
-        if (!isNewsFetched) {
-            viewModel.fetchNews()
-            isNewsFetched = true
-        }
 
         binding.btnGeneral.setOnClickListener {
             highlightButton(
@@ -103,7 +95,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnTechnology
             )
             selectedCategory = "general"
-            viewModel.fetchNews()
+            homeViewModel.fetchNews()
         }
         binding.btnSport.setOnClickListener {
             highlightButton(
@@ -113,7 +105,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnTechnology
             )
             selectedCategory = "sport"
-            viewModel.fetchSportNews()
+            homeViewModel.fetchSportNews()
         }
         binding.btnEconomy.setOnClickListener {
             highlightButton(
@@ -123,7 +115,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnTechnology
             )
             selectedCategory = "economy"
-            viewModel.fetchEconomyNews()
+            homeViewModel.fetchEconomyNews()
         }
         binding.btnTechnology.setOnClickListener {
             highlightButton(
@@ -133,7 +125,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnEconomy
             )
             selectedCategory = "technology"
-            viewModel.fetchTechnologyNews()
+            homeViewModel.fetchTechnologyNews()
         }
 
 
@@ -146,7 +138,15 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
 
     override fun onAddOrRemoveFavorite(news: NewsModel, isAdd: Boolean) {
-        viewModel.addOrRemove(news, isAdd)
+        homeViewModel.addOrRemove(news, isAdd)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        homeViewModel.eventFetchNews.observe(viewLifecycleOwner) { newsList ->
+            val mutableList: MutableList<NewsModel> = newsList?.toMutableList() ?: mutableListOf()
+            adapter.updateData(mutableList)
+        }
     }
 
 

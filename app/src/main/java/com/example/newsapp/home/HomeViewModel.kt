@@ -11,6 +11,7 @@ import com.example.newsapp.network.NetworkHelper
 import com.example.newsapp.repository.LocalRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class HomeViewModel(private val localRepository: LocalRepository ) :
     ViewModel(){
@@ -28,14 +29,12 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
                    val list = it.result
                     if (favNews != null) {
                         for (i in list) {
-                            val match2 = favNews.any { i.newsId == it.newsId}
-                            Log.i("newsId:","$it.newsId")
+                            val match2 = favNews.any { i.name == it.name}
                             if (match2) {
                                 i.isFavorite = true
                             }
                         }
                     }
-                    //TODO kaydetme işlemini id ile yapmak gerekiyor fakat id auto generate olmuyor sabit 0 kalıyor.
                     _eventFetchNews.postValue(list)
                 }
             }
@@ -74,6 +73,9 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
 
     fun addOrRemove( news: NewsModel, isAdd: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (news.newsId == null) {
+                news.newsId = UUID.randomUUID()
+            }
             if (isAdd) {
                 news.isFavorite = true
                 localRepository.add(news)

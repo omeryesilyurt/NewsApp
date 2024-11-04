@@ -6,11 +6,12 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+import java.util.UUID
 
 @Entity(tableName = "dbNews",indices = [Index(value = ["newsId"], unique = true)])
 data class NewsModel (
-    @PrimaryKey(autoGenerate = true)
-    val newsId: Int = 0,
+    @PrimaryKey
+    var newsId: UUID,
 
     @ColumnInfo(name = "id")
     val id: Long ,

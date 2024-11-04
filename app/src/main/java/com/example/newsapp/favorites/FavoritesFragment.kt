@@ -16,7 +16,7 @@ import com.example.newsapp.repository.LocalRepository
 class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: FavoritesViewModel
+    private lateinit var favoriteViewModel: FavoritesViewModel
     private lateinit var favoriteListAdapter: FavoritesAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,15 +31,11 @@ class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
         super.onViewCreated(view, savedInstanceState)
 
         val localRepository = LocalRepository(requireContext())
-        val factory = FavoritesViewModelFactory(localRepository)
-        viewModel = ViewModelProvider(this, factory)[FavoritesViewModel::class.java]
+        val favoritesViewModelFactory = FavoritesViewModelFactory(localRepository)
+        favoriteViewModel = ViewModelProvider(this, favoritesViewModelFactory)[FavoritesViewModel::class.java]
         favoriteListAdapter = FavoritesAdapter(mutableListOf(), this)
         binding.toolbar.tvTitle.text = getText(R.string.title_fav)
         binding.rvFavNews.adapter = favoriteListAdapter
-        viewModel.eventFetchNews.observe(viewLifecycleOwner) { newsList ->
-            val mutableList: MutableList<NewsModel>? = newsList?.toMutableList()
-            favoriteListAdapter.updateList(mutableList)
-        }
     }
 
     private val handleFetchNews = Observer<List<NewsModel>?> {
@@ -53,11 +49,15 @@ class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getData()
-        viewModel.eventFetchNews.observe(viewLifecycleOwner, handleFetchNews)
+        favoriteViewModel.getData()
+       // viewModel.eventFetchNews.observe(viewLifecycleOwner, handleFetchNews)
+        favoriteViewModel.eventFetchNews.observe(viewLifecycleOwner) { newsList ->
+            val mutableList: MutableList<NewsModel>? = newsList?.toMutableList()
+            favoriteListAdapter.updateList(mutableList)
+        }
     }
 
     override fun onAddOrRemoveFavorite(news: NewsModel, isAdd: Boolean) {
-        viewModel.addOrRemove(news, isAdd)
+        favoriteViewModel.addOrRemove(news, isAdd)
     }
 }

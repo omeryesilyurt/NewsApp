@@ -7,7 +7,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.newsapp.model.NewsModel
 
-@Database(entities = [NewsModel::class], version = 5, exportSchema = false)
+@Database(entities = [NewsModel::class], version = 8, exportSchema = false)
 abstract class NewsDatabase : RoomDatabase() {
 
     abstract fun NewsDao(): NewsDao?
