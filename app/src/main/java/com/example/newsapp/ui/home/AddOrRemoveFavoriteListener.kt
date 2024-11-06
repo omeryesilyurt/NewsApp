@@ -1,4 +1,4 @@
-package com.example.newsapp.home
+package com.example.newsapp.ui.home
 
 import com.example.newsapp.model.NewsModel
 

@@ -1,4 +1,4 @@
-package com.example.newsapp.home
+package com.example.newsapp.ui.home
 
 
 import android.util.Log

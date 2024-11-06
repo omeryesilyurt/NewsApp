@@ -1,4 +1,4 @@
-package com.example.newsapp.home
+package com.example.newsapp.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -81,7 +81,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
             if (selectedNews.newsId == null) {
                 selectedNews.newsId = UUID.randomUUID()
             }
-            val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment()
+            val action = com.example.newsapp.home.HomeFragmentDirections.actionHomeFragmentToDetailFragment()
             val bundle = Bundle().apply {
                 putSerializable("selectedNews", selectedNews)
             }

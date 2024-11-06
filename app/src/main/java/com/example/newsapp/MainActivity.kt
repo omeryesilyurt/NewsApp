@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.newsapp.databinding.ActivityMainBinding
-import com.example.newsapp.home.AddOrRemoveFavoriteListener
+import com.example.newsapp.ui.home.AddOrRemoveFavoriteListener
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.repository.LocalRepository
 import com.google.android.material.bottomnavigation.BottomNavigationView

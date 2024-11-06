@@ -1,36 +1,39 @@
-package com.example.newsapp.search
+package com.example.newsapp.ui.favorites
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newsapp.R
+import com.example.newsapp.database.NewsDatabase
+import com.example.newsapp.ui.home.AddOrRemoveFavoriteListener
 import com.example.newsapp.model.NewsModel
-import java.util.Locale
 
-class SearchAdapter(
+class FavoritesAdapter(
     private var itemList: MutableList<NewsModel> = mutableListOf(),
-    private var fullList: MutableList<NewsModel> = mutableListOf()
-):
-    RecyclerView.Adapter<SearchAdapter.ViewHolder>(),Filterable {
+    private val addOrRemoveFavoriteListener: AddOrRemoveFavoriteListener
+) :
+    RecyclerView.Adapter<FavoritesAdapter.ViewHolder>() {
+    private lateinit var newsDatabase: NewsDatabase
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: AppCompatTextView = itemView.findViewById(R.id.tvNewsTitle)
         val imageView: AppCompatImageView = itemView.findViewById(R.id.imgNews)
         val textViewSource: AppCompatTextView = itemView.findViewById(R.id.tvTitle)
         val textViewDescription: AppCompatTextView = itemView.findViewById(R.id.tvDescription)
+        val favoriteButton: AppCompatImageButton = itemView.findViewById(R.id.btnFav)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_news, parent, false)
+        newsDatabase = NewsDatabase.getInstance(parent.context)!!
         return ViewHolder(view)
     }
 
@@ -38,7 +41,13 @@ class SearchAdapter(
         holder.textView.text = itemList[position].name
         holder.textViewSource.text = itemList[position].source
         holder.textViewDescription.text = itemList[position].description
-        loadImage(itemList[position], holder.imageView)
+        loadImage(itemList[position] ,holder.imageView)
+        holder.favoriteButton.setImageResource(R.drawable.ic_mark_checked)
+        holder.favoriteButton.setOnClickListener {
+            holder.favoriteButton.setImageResource(R.drawable.ic_mark_unchecked)
+            addOrRemoveFavoriteListener.onAddOrRemoveFavorite(itemList[position], false)
+            notifyItemChanged(position)
+        }
     }
 
     private fun loadImage(newsItem: NewsModel, imageView: ImageView) {
@@ -53,43 +62,12 @@ class SearchAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<NewsModel>) {
-        fullList.clear()
-        fullList.addAll(newList)
-        itemList.clear()
-        itemList.addAll(newList)
-        notifyDataSetChanged()
+    fun updateList(itemList: List<NewsModel>?) {
+        this.itemList = itemList?.toMutableList() ?: mutableListOf()
+        this.notifyDataSetChanged()
     }
-
 
     override fun getItemCount(): Int {
         return itemList.size
-    }
-
-    override fun getFilter(): Filter {
-        return object : Filter() {
-            override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val filteredList = if (constraint.isNullOrEmpty()) {
-                    fullList
-                } else {
-                    val query = constraint.toString().lowercase(Locale.getDefault()).trim()
-                    fullList.filter { news ->
-                        (news.name?.lowercase(Locale.getDefault())?.contains(query) == true)
-                    }.toMutableList()
-                }
-                return FilterResults().apply { values = filteredList }
-            }
-
-
-            @SuppressLint("NotifyDataSetChanged")
-            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                itemList.clear()
-                if (results?.values != null) {
-                    itemList.addAll(results.values as List<NewsModel>)
-                }
-                notifyDataSetChanged()
-            }
-
-        }
     }
 }

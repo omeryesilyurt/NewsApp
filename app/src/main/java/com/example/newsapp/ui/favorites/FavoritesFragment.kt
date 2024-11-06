@@ -1,4 +1,4 @@
-package com.example.newsapp.favorites
+package com.example.newsapp.ui.favorites
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentFavoritesBinding
-import com.example.newsapp.home.AddOrRemoveFavoriteListener
+import com.example.newsapp.ui.home.AddOrRemoveFavoriteListener
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.repository.LocalRepository
 

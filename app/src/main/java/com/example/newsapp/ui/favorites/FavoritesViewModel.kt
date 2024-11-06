@@ -1,4 +1,4 @@
-package com.example.newsapp.favorites
+package com.example.newsapp.ui.favorites
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

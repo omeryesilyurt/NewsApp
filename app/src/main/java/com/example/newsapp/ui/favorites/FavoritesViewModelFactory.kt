@@ -1,15 +1,14 @@
-package com.example.newsapp.home
+package com.example.newsapp.ui.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.newsapp.repository.LocalRepository
 
-class HomeViewModelFactory(private val localRepository: LocalRepository) : ViewModelProvider.Factory {
+class FavoritesViewModelFactory(private val localRepository: LocalRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-            return HomeViewModel(localRepository) as T
+        if (modelClass.isAssignableFrom(FavoritesViewModel::class.java)) {
+            return FavoritesViewModel(localRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

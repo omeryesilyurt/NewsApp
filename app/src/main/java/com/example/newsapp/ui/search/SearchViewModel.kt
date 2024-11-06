@@ -1,4 +1,4 @@
-package com.example.newsapp.search
+package com.example.newsapp.ui.search
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

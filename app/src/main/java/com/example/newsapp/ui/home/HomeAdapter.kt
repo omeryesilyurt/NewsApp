@@ -1,4 +1,4 @@
-package com.example.newsapp.favorites
+package com.example.newsapp.ui.home
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -12,14 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.database.NewsDatabase
-import com.example.newsapp.home.AddOrRemoveFavoriteListener
 import com.example.newsapp.model.NewsModel
 
-class FavoritesAdapter(
-    private var itemList: MutableList<NewsModel> = mutableListOf(),
-    private val addOrRemoveFavoriteListener: AddOrRemoveFavoriteListener
+class HomeAdapter(
+    private var itemList: MutableList<NewsModel>,
+    private val onItemClick: (NewsModel) -> Unit,
+    private val addOrRemoveFavoriteListener: AddOrRemoveFavoriteListener,
 ) :
-    RecyclerView.Adapter<FavoritesAdapter.ViewHolder>() {
+    RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
     private lateinit var newsDatabase: NewsDatabase
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -41,12 +41,28 @@ class FavoritesAdapter(
         holder.textView.text = itemList[position].name
         holder.textViewSource.text = itemList[position].source
         holder.textViewDescription.text = itemList[position].description
-        loadImage(itemList[position] ,holder.imageView)
-        holder.favoriteButton.setImageResource(R.drawable.ic_mark_checked)
-        holder.favoriteButton.setOnClickListener {
+
+        loadImage(itemList[position], holder.imageView)
+        holder.itemView.setOnClickListener {
+            onItemClick(itemList[position])
+        }
+        val newsItem = itemList[position]
+        if (newsItem.isFavorite == true) {
+            holder.favoriteButton.setImageResource(R.drawable.ic_mark_checked)
+        } else {
             holder.favoriteButton.setImageResource(R.drawable.ic_mark_unchecked)
-            addOrRemoveFavoriteListener.onAddOrRemoveFavorite(itemList[position], false)
-            notifyItemChanged(position)
+        }
+        holder.itemView.setOnClickListener {
+            onItemClick(itemList[position])
+        }
+        holder.favoriteButton.setOnClickListener {
+            val newFavoriteStatus = !(newsItem.isFavorite ?: false)
+            if (newFavoriteStatus) {
+                holder.favoriteButton.setImageResource(R.drawable.ic_mark_checked)
+            } else {
+                holder.favoriteButton.setImageResource(R.drawable.ic_mark_unchecked)
+            }
+            addOrRemoveFavoriteListener.onAddOrRemoveFavorite(newsItem, newFavoriteStatus)
         }
     }
 
@@ -61,13 +77,13 @@ class FavoritesAdapter(
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateList(itemList: List<NewsModel>?) {
-        this.itemList = itemList?.toMutableList() ?: mutableListOf()
-        this.notifyDataSetChanged()
-    }
-
     override fun getItemCount(): Int {
         return itemList.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(newsList: MutableList<NewsModel>) {
+        itemList = newsList
+        notifyDataSetChanged()
     }
 }
