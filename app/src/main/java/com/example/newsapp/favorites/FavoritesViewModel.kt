@@ -16,11 +16,9 @@ class FavoritesViewModel(private val localRepository: LocalRepository) : ViewMod
 
     private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
-    private val eventShowProgress = MutableLiveData<Boolean>()
 
     fun getData() {
         viewModelScope.launch(Dispatchers.IO) {
-            eventShowProgress.postValue(true)
             try {
                 val response: Response<NewsResponseModel> =
                     NetworkHelper.service.getNewsList("general")

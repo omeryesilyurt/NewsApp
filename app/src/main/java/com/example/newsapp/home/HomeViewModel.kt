@@ -17,7 +17,6 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
     ViewModel(){
     private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
-    val eventShowProgress = MutableLiveData<Boolean>()
 
 
     fun fetchNews() {

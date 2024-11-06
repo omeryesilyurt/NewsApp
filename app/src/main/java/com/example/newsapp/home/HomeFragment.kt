@@ -11,6 +11,7 @@ import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.repository.LocalRepository
+import java.util.UUID
 
 class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
@@ -19,7 +20,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var adapter: HomeAdapter
     private var newsList: MutableList<NewsModel> = mutableListOf()
-    private var isNewsFetched = false
     private var selectedCategory: String? = null
 
 
@@ -78,6 +78,9 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
         }
 
         adapter = HomeAdapter(newsList, { selectedNews ->
+            if (selectedNews.newsId == null) {
+                selectedNews.newsId = UUID.randomUUID()
+            }
             val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment()
             val bundle = Bundle().apply {
                 putSerializable("selectedNews", selectedNews)

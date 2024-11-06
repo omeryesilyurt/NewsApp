@@ -27,14 +27,6 @@
                 tools:src="@drawable/news"
                 android:scaleType="fitXY"/>
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnFav"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|top"
-                android:background="@drawable/cb_fav_selector"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"/>
         </FrameLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
