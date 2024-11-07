@@ -81,7 +81,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
             if (selectedNews.newsId == null) {
                 selectedNews.newsId = UUID.randomUUID()
             }
-            val action = com.example.newsapp.home.HomeFragmentDirections.actionHomeFragmentToDetailFragment()
+            val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment()
             val bundle = Bundle().apply {
                 putSerializable("selectedNews", selectedNews)
             }
