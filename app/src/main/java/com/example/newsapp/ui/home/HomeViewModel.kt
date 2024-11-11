@@ -1,8 +1,6 @@
 package com.example.newsapp.ui.home
 
 
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,8 +26,8 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
                    val list = it.result
                     if (favNews != null) {
                         for (i in list) {
-                            val match2 = favNews.any { i.name == it.name}
-                            if (match2) {
+                            val matchedNews = favNews.any { i.name == it.name}
+                            if (matchedNews) {
                                 i.isFavorite = true
                             }
                         }

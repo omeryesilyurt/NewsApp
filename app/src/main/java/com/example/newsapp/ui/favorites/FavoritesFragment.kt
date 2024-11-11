@@ -38,10 +38,6 @@ class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
         binding.rvFavNews.adapter = favoriteListAdapter
     }
 
-    private val handleFetchNews = Observer<List<NewsModel>?> {
-        favoriteListAdapter.updateList(it)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -50,7 +46,6 @@ class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
     override fun onResume() {
         super.onResume()
         favoriteViewModel.getData()
-       // viewModel.eventFetchNews.observe(viewLifecycleOwner, handleFetchNews)
         favoriteViewModel.eventFetchNews.observe(viewLifecycleOwner) { newsList ->
             val mutableList: MutableList<NewsModel>? = newsList?.toMutableList()
             favoriteListAdapter.updateList(mutableList)
