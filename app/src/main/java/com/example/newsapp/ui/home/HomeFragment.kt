@@ -40,43 +40,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
         homeViewModel.fetchNews()
 
 
-        when (selectedCategory) {
-            "general" -> highlightButton(
-                binding.btnGeneral,
-                binding.btnSport,
-                binding.btnEconomy,
-                binding.btnTechnology
-            )
-
-            "sport" -> highlightButton(
-                binding.btnSport,
-                binding.btnGeneral,
-                binding.btnEconomy,
-                binding.btnTechnology
-            )
-
-            "economy" -> highlightButton(
-                binding.btnEconomy,
-                binding.btnGeneral,
-                binding.btnSport,
-                binding.btnTechnology
-            )
-
-            "technology" -> highlightButton(
-                binding.btnTechnology,
-                binding.btnGeneral,
-                binding.btnSport,
-                binding.btnEconomy
-            )
-
-            else -> highlightButton(
-                binding.btnGeneral,
-                binding.btnSport,
-                binding.btnEconomy,
-                binding.btnTechnology
-            )
-        }
-
         adapter = HomeAdapter(newsList, { selectedNews ->
             if (selectedNews.newsId == null) {
                 selectedNews.newsId = UUID.randomUUID()
