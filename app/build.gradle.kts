@@ -6,7 +6,9 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
     alias(libs.plugins.navigationSafeArgs)
     alias(libs.plugins.ksp)
+    id ("dagger.hilt.android.plugin")
 }
+
 
 android {
     namespace = "com.example.newsapp"
@@ -76,6 +78,8 @@ dependencies {
     implementation(libs.room)
     implementation(libs.roomKtx)
     implementation(libs.androidx.fragment)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
     ksp(libs.roomCompiler)
     implementation(libs.lifecycleLivedataKtx)
     implementation(libs.coroutines)

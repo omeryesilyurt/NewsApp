@@ -45,11 +45,11 @@ class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     override fun onResume() {
         super.onResume()
-        favoriteViewModel.getData()
         favoriteViewModel.eventFetchNews.observe(viewLifecycleOwner) { newsList ->
             val mutableList: MutableList<NewsModel>? = newsList?.toMutableList()
             favoriteListAdapter.updateList(mutableList)
         }
+        favoriteViewModel.getData()
     }
 
     override fun onAddOrRemoveFavorite(news: NewsModel, isAdd: Boolean) {
