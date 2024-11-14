@@ -14,7 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 class SearchFragment : Fragment() {
 
-    //TODO Buraya AndroidEntryPoint gerekir mi ?
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private val searchViewModel: SearchViewModel by viewModels()
