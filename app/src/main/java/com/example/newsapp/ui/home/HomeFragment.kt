@@ -5,19 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.repository.LocalRepository
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var homeViewModel: HomeViewModel
+    private  val homeViewModel: HomeViewModel by viewModels()
     private lateinit var adapter: HomeAdapter
     private var newsList: MutableList<NewsModel> = mutableListOf()
     private var selectedCategory: String? = null
@@ -34,9 +37,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val localRepository = LocalRepository(requireContext())
-        val homeViewModelFactory = HomeViewModelFactory(localRepository)
-        homeViewModel = ViewModelProvider(this, homeViewModelFactory)[HomeViewModel::class.java]
         homeViewModel.fetchNews()
 
 

@@ -22,6 +22,7 @@ uiDesktop = "1.7.0"
 kspVersion = "1.9.0-1.0.13"
 fragment = "1.8.4"
 hiltVersion = "2.51.1"
+chucker = "3.5.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,6 +56,8 @@ androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", vers
 androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltVersion" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltVersion" }
+chuckerDebug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
+chuckerRelease = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
 
 

@@ -5,14 +5,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.NewsModel
+import com.example.newsapp.network.ApiService
 import com.example.newsapp.network.NetworkHelper
 import com.example.newsapp.repository.LocalRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
+import javax.inject.Inject
 
-class HomeViewModel(private val localRepository: LocalRepository ) :
-    ViewModel(){
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val localRepository: LocalRepository,
+    private val apiService: ApiService
+) :
+    ViewModel() {
     private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
 
@@ -20,13 +27,13 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
     fun fetchNews() {
         viewModelScope.launch(Dispatchers.IO) {
             val favNews = localRepository.getFavoriteList()
-            val response = NetworkHelper.service.getNewsList("general")
+            val response = apiService.getNewsList("general")
             response.body()?.let {
                 if (it.success) {
-                   val list = it.result
+                    val list = it.result
                     if (favNews != null) {
                         for (i in list) {
-                            val matchedNews = favNews.any { i.name == it.name}
+                            val matchedNews = favNews.any { i.name == it.name }
                             if (matchedNews) {
                                 i.isFavorite = true
                             }
@@ -40,7 +47,7 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
 
     fun fetchSportNews() {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = NetworkHelper.service.getNewsList("sport")
+            val response = apiService.getNewsList("sport")
             response.body()?.let {
                 if (it.success)
                     eventFetchNews.postValue(it.result)
@@ -50,7 +57,7 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
 
     fun fetchEconomyNews() {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = NetworkHelper.service.getNewsList("economy")
+            val response =apiService.getNewsList("economy")
             response.body()?.let {
                 if (it.success)
                     eventFetchNews.postValue(it.result)
@@ -60,7 +67,7 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
 
     fun fetchTechnologyNews() {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = NetworkHelper.service.getNewsList("technology")
+            val response = apiService.getNewsList("technology")
             response.body()?.let {
                 if (it.success)
                     eventFetchNews.postValue(it.result)
@@ -68,7 +75,7 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
         }
     }
 
-    fun addOrRemove( news: NewsModel, isAdd: Boolean) {
+    fun addOrRemove(news: NewsModel, isAdd: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             if (news.newsId == null) {
                 news.newsId = UUID.randomUUID()
@@ -76,7 +83,7 @@ class HomeViewModel(private val localRepository: LocalRepository ) :
             if (isAdd) {
                 news.isFavorite = true
                 localRepository.add(news)
-            } else{
+            } else {
                 news.isFavorite = false
                 localRepository.remove(news)
             }

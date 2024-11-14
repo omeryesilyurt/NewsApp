@@ -10,9 +10,11 @@ import androidx.fragment.app.viewModels
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentSearchBinding
 import com.example.newsapp.model.NewsModel
+import dagger.hilt.android.AndroidEntryPoint
 
 class SearchFragment : Fragment() {
 
+    //TODO Buraya AndroidEntryPoint gerekir mi ?
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private val searchViewModel: SearchViewModel by viewModels()

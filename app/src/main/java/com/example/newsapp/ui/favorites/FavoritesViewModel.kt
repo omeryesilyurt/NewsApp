@@ -5,14 +5,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.model.NewsResponseModel
+import com.example.newsapp.network.ApiService
 import com.example.newsapp.network.NetworkHelper
 import com.example.newsapp.repository.LocalRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.util.UUID
+import javax.inject.Inject
 
-class FavoritesViewModel(private val localRepository: LocalRepository) : ViewModel() {
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(
+    private val localRepository: LocalRepository,
+    private val apiService: ApiService
+) : ViewModel() {
+
 
     private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
@@ -21,7 +29,7 @@ class FavoritesViewModel(private val localRepository: LocalRepository) : ViewMod
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response: Response<NewsResponseModel> =
-                    NetworkHelper.service.getNewsList("general")
+                    apiService.getNewsList("general")
                 if (response.isSuccessful) {
                     val newsResponse = response.body()
                     newsResponse?.let { newsList ->

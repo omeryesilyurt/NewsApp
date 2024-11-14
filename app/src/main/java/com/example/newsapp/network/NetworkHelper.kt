@@ -16,7 +16,6 @@ class NetworkHelper {
 
         val service = getRetrofitInstance().create(ApiService::class.java)
 
-
         private fun getRetrofitInstance(): Retrofit {
             val gson = GsonBuilder().setLenient().create()
             val gsonConverterFactory = GsonConverterFactory.create(gson)
