@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.model.NewsResponseModel
 import com.example.newsapp.network.ApiService
-import com.example.newsapp.network.NetworkHelper
 import com.example.newsapp.repository.LocalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
