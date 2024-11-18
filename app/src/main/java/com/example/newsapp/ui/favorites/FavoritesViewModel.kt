@@ -27,23 +27,30 @@ class FavoritesViewModel @Inject constructor(
     fun getData() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response: Response<NewsResponseModel> =
-                    apiService.getNewsList("general")
-                if (response.isSuccessful) {
-                    val newsResponse = response.body()
-                    newsResponse?.let { newsList ->
-                        val updatedNewsList = localRepository.getFavoriteNews(newsList.result)
-                        eventFetchNews.postValue(updatedNewsList)
-                    } ?: run {
-                        eventFetchNews.postValue(null)
+                val categories = listOf("general", "sport", "economy", "technology")
+                val allNews = mutableListOf<NewsModel>()
+
+                for (category in categories) {
+                    val response: Response<NewsResponseModel> = apiService.getNewsList(category)
+                    if (response.isSuccessful) {
+                        val newsResponse = response.body()
+                        newsResponse?.let { newsList ->
+                            allNews.addAll(newsList.result)
+                        }
                     }
                 }
+                if (allNews.isEmpty()) {
+                    eventFetchNews.postValue(null)
+                } else {
+                    val updatedNewsList = localRepository.getFavoriteNews(allNews)
+                    eventFetchNews.postValue(updatedNewsList)
+                }
+
             } catch (e: Exception) {
                 println(e)
             }
         }
     }
-
 
     fun addOrRemove(news: NewsModel, isAdd: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {

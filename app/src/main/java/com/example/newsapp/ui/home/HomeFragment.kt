@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.model.NewsModel
+import com.example.newsapp.paging.NewsPagingAdapter
 import com.example.newsapp.repository.LocalRepository
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
@@ -37,7 +38,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        homeViewModel.fetchNews()
+        homeViewModel.fetchNews("general")
 
 
         adapter = HomeAdapter(newsList, { selectedNews ->
@@ -61,7 +62,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnTechnology
             )
             selectedCategory = "general"
-            homeViewModel.fetchNews()
+            homeViewModel.fetchNews("general")
         }
         binding.btnSport.setOnClickListener {
             highlightButton(
@@ -71,7 +72,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnTechnology
             )
             selectedCategory = "sport"
-            homeViewModel.fetchSportNews()
+            homeViewModel.fetchNews("sport")
         }
         binding.btnEconomy.setOnClickListener {
             highlightButton(
@@ -81,7 +82,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnTechnology
             )
             selectedCategory = "economy"
-            homeViewModel.fetchEconomyNews()
+            homeViewModel.fetchNews("economy")
         }
         binding.btnTechnology.setOnClickListener {
             highlightButton(
@@ -91,7 +92,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnEconomy
             )
             selectedCategory = "technology"
-            homeViewModel.fetchTechnologyNews()
+            homeViewModel.fetchNews("technology")
         }
 
 

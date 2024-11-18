@@ -4,8 +4,12 @@ package com.example.newsapp.ui.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.network.ApiService
+import com.example.newsapp.paging.NewsPagingSource
 import com.example.newsapp.repository.LocalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,57 +26,47 @@ class HomeViewModel @Inject constructor(
     private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
 
-
-    fun fetchNews() {
+    fun fetchNews(category: String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
-            val favNews = localRepository.getFavoriteList()
-            val response = apiService.getNewsList("general")
-            response.body()?.let {
-                if (it.success) {
-                    val list = it.result
-                    if (favNews != null) {
-                        for (i in list) {
-                            val matchedNews = favNews.any { i.name == it.name }
-                            if (matchedNews) {
-                                i.isFavorite = true
-                            }
+            try {
+                val favNews = localRepository.getFavoriteList()
+                val categories = category?.let { listOf(it) } ?: listOf(
+                    "general",
+                    "sport",
+                    "economy",
+                    "technology"
+                )
+                val allNews = mutableListOf<NewsModel>()
+
+                for (cat in categories) {
+                    val response = apiService.getNewsList(cat)
+                    response.body()?.let {
+                        if (it.success) {
+                            allNews.addAll(it.result)
                         }
                     }
-                    _eventFetchNews.postValue(list)
                 }
+
+                if (favNews != null) {
+                    for (news in allNews) {
+                        news.isFavorite = favNews.any { it.name == news.name }
+                    }
+                }
+
+                _eventFetchNews.postValue(allNews)
+            } catch (e: Exception) {
+                println(e)
             }
         }
     }
 
-    fun fetchSportNews() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = apiService.getNewsList("sport")
-            response.body()?.let {
-                if (it.success)
-                    eventFetchNews.postValue(it.result)
-            }
-        }
-    }
-
-    fun fetchEconomyNews() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val response =apiService.getNewsList("economy")
-            response.body()?.let {
-                if (it.success)
-                    eventFetchNews.postValue(it.result)
-            }
-        }
-    }
-
-    fun fetchTechnologyNews() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = apiService.getNewsList("technology")
-            response.body()?.let {
-                if (it.success)
-                    eventFetchNews.postValue(it.result)
-            }
-        }
-    }
+    val pagedNews = Pager(
+        config = PagingConfig(
+            pageSize = NewsPagingSource.PAGINATION_LIMIT,
+            enablePlaceholders = false
+        ),
+        pagingSourceFactory = { NewsPagingSource(apiService, "general") }
+    ).flow.cachedIn(viewModelScope)
 
     fun addOrRemove(news: NewsModel, isAdd: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
