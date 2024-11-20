@@ -31,7 +31,7 @@ class FavoritesViewModel @Inject constructor(
                 val allNews = mutableListOf<NewsModel>()
 
                 for (category in categories) {
-                    val response: Response<NewsResponseModel> = apiService.getNewsList(category)
+                    val response: Response<NewsResponseModel> = apiService.getNewsList(category,20)
                     if (response.isSuccessful) {
                         val newsResponse = response.body()
                         newsResponse?.let { newsList ->

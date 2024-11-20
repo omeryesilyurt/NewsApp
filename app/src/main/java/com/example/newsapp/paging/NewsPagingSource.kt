@@ -1,5 +1,6 @@
 package com.example.newsapp.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.newsapp.model.NewsModel
@@ -18,6 +19,8 @@ class NewsPagingSource(private val apiService: ApiService, private val category:
         return try {
             val response = apiService.getNewsList(tag = category, paging = page)
             val newsList = response.body()?.result ?: emptyList()
+            val data = response.body()?.result ?: emptyList()
+            Log.d("PagingDebug", "Gelen veri boyutu: ${data.size}")
             LoadResult.Page(
                 data = newsList,
                 prevKey = if (page == 1) null else page - 1,
@@ -28,7 +31,7 @@ class NewsPagingSource(private val apiService: ApiService, private val category:
         }
     }
     companion object {
-        const val PAGINATION_LIMIT = 20
+        const val PAGINATION_LIMIT = 4
     }
 }
 

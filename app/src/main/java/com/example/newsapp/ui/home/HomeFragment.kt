@@ -7,13 +7,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.paging.NewsPagingAdapter
 import com.example.newsapp.repository.LocalRepository
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 @AndroidEntryPoint
@@ -22,7 +27,8 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private  val homeViewModel: HomeViewModel by viewModels()
-    private lateinit var adapter: HomeAdapter
+    //private lateinit var adapter: HomeAdapter
+    private lateinit var pagingAdapter: NewsPagingAdapter
     private var newsList: MutableList<NewsModel> = mutableListOf()
     private var selectedCategory: String? = null
 
@@ -38,10 +44,19 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        homeViewModel.fetchNews("general")
+        pagingAdapter = NewsPagingAdapter()
+        binding.rvNews.adapter = pagingAdapter
+        val pagingAdapter = NewsPagingAdapter { newsItem ->
+            findNavController().navigate(R.id.actionHomeFragmentToDetailFragment)
+        }
+        lifecycleScope.launch {
+            homeViewModel.getNews("general").collectLatest { pagingData ->
+                pagingAdapter.submitData(pagingData)
+            }
+        }
 
 
-        adapter = HomeAdapter(newsList, { selectedNews ->
+/*        adapter = HomeAdapter(newsList, { selectedNews ->
             if (selectedNews.newsId == null) {
                 selectedNews.newsId = UUID.randomUUID()
             }
@@ -50,8 +65,8 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 putSerializable("selectedNews", selectedNews)
             }
             findNavController().navigate(action.actionId, bundle)
-        }, this)
-        binding.rvNews.adapter = adapter
+        }, this)*/
+        binding.rvNews.adapter = pagingAdapter
         binding.toolbar.tvTitle.text = getText(R.string.title_home)
 
         binding.btnGeneral.setOnClickListener {
@@ -62,7 +77,8 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnTechnology
             )
             selectedCategory = "general"
-            homeViewModel.fetchNews("general")
+            updateNews("general")
+            homeViewModel.getNews("general")
         }
         binding.btnSport.setOnClickListener {
             highlightButton(
@@ -72,7 +88,9 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnTechnology
             )
             selectedCategory = "sport"
-            homeViewModel.fetchNews("sport")
+
+            updateNews("sport")
+            homeViewModel.getNews("sport")
         }
         binding.btnEconomy.setOnClickListener {
             highlightButton(
@@ -82,7 +100,8 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnTechnology
             )
             selectedCategory = "economy"
-            homeViewModel.fetchNews("economy")
+            updateNews("economy")
+            homeViewModel.getNews("economy")
         }
         binding.btnTechnology.setOnClickListener {
             highlightButton(
@@ -92,9 +111,9 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                 binding.btnEconomy
             )
             selectedCategory = "technology"
-            homeViewModel.fetchNews("technology")
+            updateNews("technology")
+            homeViewModel.getNews("technology")
         }
-
 
     }
 
@@ -103,6 +122,13 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
         otherButtons.forEach { it.setBackgroundResource(R.drawable.default_button_bg) }
     }
 
+    private fun updateNews(category: String) {
+        lifecycleScope.launch {
+            homeViewModel.getNews(category).collectLatest { pagingData ->
+                pagingAdapter.submitData(pagingData)
+            }
+        }}
+
 
     override fun onAddOrRemoveFavorite(news: NewsModel, isAdd: Boolean) {
         homeViewModel.addOrRemove(news, isAdd)
@@ -110,12 +136,13 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     override fun onResume() {
         super.onResume()
-        homeViewModel.eventFetchNews.observe(viewLifecycleOwner) { newsList ->
-            val mutableList: MutableList<NewsModel> = newsList?.toMutableList() ?: mutableListOf()
-            adapter.updateData(mutableList)
+        lifecycleScope.launch {
+            homeViewModel.getNews("general").collectLatest { pagingData ->
+                pagingAdapter.submitData(pagingData)
+            }
         }
-    }
 
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

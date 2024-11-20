@@ -6,13 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.network.ApiService
+import com.example.newsapp.paging.NewsPagingRepository
 import com.example.newsapp.paging.NewsPagingSource
 import com.example.newsapp.repository.LocalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -20,11 +23,15 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val localRepository: LocalRepository,
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val pagingRepository: NewsPagingRepository
 ) :
     ViewModel() {
     private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
+    private var _newsPagingData: Flow<PagingData<NewsModel>>? = null
+
+    //TODO Paging yapısı çalışıyor fakat kategori seçimlerinde ilgili kategoriye ait haberler gelmiyor.
 
     fun fetchNews(category: String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -39,7 +46,7 @@ class HomeViewModel @Inject constructor(
                 val allNews = mutableListOf<NewsModel>()
 
                 for (cat in categories) {
-                    val response = apiService.getNewsList(cat)
+                    val response = apiService.getNewsList(cat,4)
                     response.body()?.let {
                         if (it.success) {
                             allNews.addAll(it.result)
@@ -60,13 +67,26 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    val pagedNews = Pager(
-        config = PagingConfig(
-            pageSize = NewsPagingSource.PAGINATION_LIMIT,
-            enablePlaceholders = false
-        ),
-        pagingSourceFactory = { NewsPagingSource(apiService, "general") }
-    ).flow.cachedIn(viewModelScope)
+     fun getNews(category: String? = null): Flow<PagingData<NewsModel>> {
+        if (_newsPagingData == null) {
+            _newsPagingData = category?.let { pagingRepository.getNewsPagingData(it).cachedIn(viewModelScope) }
+        }
+        return _newsPagingData!!
+    }
+
+/*
+    fun getNews(category: String): Flow<PagingData<NewsModel>> {
+        // Yeni bir kategori seçildiğinde veri akışını yeniden oluşturun
+        _newsPagingData = Pager(
+            config = PagingConfig(pageSize = 20),
+            pagingSourceFactory = { NewsPagingSource(apiService, category) }
+        ).flow.cachedIn(viewModelScope)
+
+        return _newsPagingData!!
+    }
+*/
+
+
 
     fun addOrRemove(news: NewsModel, isAdd: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {

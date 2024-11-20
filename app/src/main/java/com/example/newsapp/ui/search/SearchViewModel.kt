@@ -22,7 +22,7 @@ class SearchViewModel @Inject constructor(private val apiService: ApiService) : 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response: Response<NewsResponseModel> =
-                    apiService.getNewsList("general")
+                    apiService.getNewsList("general",20)
                 if (response.isSuccessful) {
                     val newsResponse = response.body()
                     newsResponse?.let { newsList ->

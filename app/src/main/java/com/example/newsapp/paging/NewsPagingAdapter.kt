@@ -11,10 +11,13 @@ import com.example.newsapp.R
 import com.example.newsapp.databinding.ItemNewsBinding
 import com.example.newsapp.model.NewsModel
 
-class NewsPagingAdapter :
+class NewsPagingAdapter(private val onItemClick: (NewsModel) -> Unit = {}) :
     PagingDataAdapter<NewsModel, NewsPagingAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
-    class NewsViewHolder(private val binding: ItemNewsBinding) :
+    class NewsViewHolder(
+        private val binding: ItemNewsBinding,
+        private val onItemClick: (NewsModel) -> Unit
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(news: NewsModel?) {
@@ -23,11 +26,14 @@ class NewsPagingAdapter :
                     tvNewsTitle.text = it.name
                     tvTitle.text = it.source
                     tvDescription.text = it.description
-                    loadImage(it,imgNews)
-                    //TODO item clicklistener eksik.
+                    loadImage(it, imgNews)
+                    itemView.setOnClickListener {
+                        onItemClick(news)
+                    }
                 }
             }
         }
+
         private fun loadImage(newsItem: NewsModel, imageView: ImageView) {
             if (!newsItem.image.isNullOrEmpty()) {
                 Glide.with(imageView.context)
@@ -44,7 +50,7 @@ class NewsPagingAdapter :
         val binding = ItemNewsBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return NewsViewHolder(binding)
+        return NewsViewHolder(binding, onItemClick)
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
@@ -54,8 +60,7 @@ class NewsPagingAdapter :
 
     class NewsDiffCallback : DiffUtil.ItemCallback<NewsModel>() {
         override fun areItemsTheSame(oldItem: NewsModel, newItem: NewsModel): Boolean {
-            return oldItem.newsId == newItem.newsId
-            //TODO buradaki newsId name ile değiştirilebilir.
+            return oldItem.name == newItem.name
         }
 
         override fun areContentsTheSame(oldItem: NewsModel, newItem: NewsModel): Boolean {
