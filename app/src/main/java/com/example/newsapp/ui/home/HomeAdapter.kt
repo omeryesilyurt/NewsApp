@@ -1,4 +1,3 @@
-/*
 package com.example.newsapp.ui.home
 
 import android.annotation.SuppressLint
@@ -87,4 +86,4 @@ class HomeAdapter(
         itemList = newsList
         notifyDataSetChanged()
     }
-}*/
+}

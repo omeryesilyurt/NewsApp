@@ -44,6 +44,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.toolbar.tvTitle.text = getText(R.string.title_home)
         pagingAdapter = NewsPagingAdapter()
         binding.rvNews.adapter = pagingAdapter
         val pagingAdapter = NewsPagingAdapter { newsItem ->
@@ -66,8 +67,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
             }
             findNavController().navigate(action.actionId, bundle)
         }, this)*/
-        binding.rvNews.adapter = pagingAdapter
-        binding.toolbar.tvTitle.text = getText(R.string.title_home)
 
         binding.btnGeneral.setOnClickListener {
             highlightButton(
@@ -78,7 +77,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
             )
             selectedCategory = "general"
             updateNews("general")
-            homeViewModel.getNews("general")
         }
         binding.btnSport.setOnClickListener {
             highlightButton(
@@ -90,7 +88,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
             selectedCategory = "sport"
 
             updateNews("sport")
-            homeViewModel.getNews("sport")
         }
         binding.btnEconomy.setOnClickListener {
             highlightButton(
@@ -101,7 +98,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
             )
             selectedCategory = "economy"
             updateNews("economy")
-            homeViewModel.getNews("economy")
         }
         binding.btnTechnology.setOnClickListener {
             highlightButton(
@@ -112,7 +108,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
             )
             selectedCategory = "technology"
             updateNews("technology")
-            homeViewModel.getNews("technology")
         }
 
     }

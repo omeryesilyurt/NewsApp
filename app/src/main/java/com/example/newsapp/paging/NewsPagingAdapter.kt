@@ -11,7 +11,9 @@ import com.example.newsapp.R
 import com.example.newsapp.databinding.ItemNewsBinding
 import com.example.newsapp.model.NewsModel
 
-class NewsPagingAdapter(private val onItemClick: (NewsModel) -> Unit = {}) :
+class NewsPagingAdapter(
+    private val onItemClick: (NewsModel) -> Unit = {}
+) :
     PagingDataAdapter<NewsModel, NewsPagingAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
     class NewsViewHolder(

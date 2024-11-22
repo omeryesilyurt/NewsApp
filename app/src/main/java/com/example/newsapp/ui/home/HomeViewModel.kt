@@ -31,7 +31,7 @@ class HomeViewModel @Inject constructor(
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
     private var _newsPagingData: Flow<PagingData<NewsModel>>? = null
 
-    //TODO Paging yapısı çalışıyor fakat kategori seçimlerinde ilgili kategoriye ait haberler gelmiyor.
+    //TODO ItemClick ve Favori durumu çalışmıyor.
 
     fun fetchNews(category: String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -67,26 +67,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-     fun getNews(category: String? = null): Flow<PagingData<NewsModel>> {
-        if (_newsPagingData == null) {
-            _newsPagingData = category?.let { pagingRepository.getNewsPagingData(it).cachedIn(viewModelScope) }
-        }
-        return _newsPagingData!!
-    }
-
-/*
     fun getNews(category: String): Flow<PagingData<NewsModel>> {
-        // Yeni bir kategori seçildiğinde veri akışını yeniden oluşturun
-        _newsPagingData = Pager(
+        return Pager(
             config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { NewsPagingSource(apiService, category) }
         ).flow.cachedIn(viewModelScope)
-
-        return _newsPagingData!!
     }
-*/
-
-
 
     fun addOrRemove(news: NewsModel, isAdd: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
