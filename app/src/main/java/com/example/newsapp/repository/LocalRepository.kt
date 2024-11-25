@@ -20,6 +20,7 @@ class LocalRepository(context: Context) {
        return newsDB?.NewsDao()?.getAllFavoriteNews()
     }
 
+    //TODO: burada kaldık
     fun getFavoriteNews(newsList: List<NewsModel>): List<NewsModel> {
         val favoriteNews = newsDB?.NewsDao()?.getAllFavoriteNews()
         return if (favoriteNews != null) {

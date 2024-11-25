@@ -12,13 +12,15 @@ import com.example.newsapp.databinding.ItemNewsBinding
 import com.example.newsapp.model.NewsModel
 
 class NewsPagingAdapter(
-    private val onItemClick: (NewsModel) -> Unit = {}
+    private val onItemClick: (NewsModel) -> Unit = {},
+    private val addOrRemoveFavoriteListener: (NewsModel, Boolean) -> Unit
 ) :
     PagingDataAdapter<NewsModel, NewsPagingAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
     class NewsViewHolder(
         private val binding: ItemNewsBinding,
-        private val onItemClick: (NewsModel) -> Unit
+        private val onItemClick: (NewsModel) -> Unit,
+        private val addOrRemoveFavoriteListener: (NewsModel, Boolean) -> Unit
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -31,6 +33,22 @@ class NewsPagingAdapter(
                     loadImage(it, imgNews)
                     itemView.setOnClickListener {
                         onItemClick(news)
+                    }
+
+                    if (it.isFavorite == true) {
+                        btnFav.setImageResource(R.drawable.ic_mark_checked)
+                    } else {
+                        btnFav.setImageResource(R.drawable.ic_mark_unchecked)
+                    }
+
+                    btnFav.setOnClickListener {
+                        val newFavoriteStatus = !(news.isFavorite ?: false)
+                        if (newFavoriteStatus) {
+                            btnFav.setImageResource(R.drawable.ic_mark_checked)
+                        } else {
+                            btnFav.setImageResource(R.drawable.ic_mark_unchecked)
+                        }
+                        addOrRemoveFavoriteListener(news, newFavoriteStatus)
                     }
                 }
             }
@@ -52,7 +70,7 @@ class NewsPagingAdapter(
         val binding = ItemNewsBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return NewsViewHolder(binding, onItemClick)
+        return NewsViewHolder(binding, onItemClick, addOrRemoveFavoriteListener)
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {

@@ -6,20 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.PagingData
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.paging.NewsPagingAdapter
-import com.example.newsapp.repository.LocalRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
@@ -27,7 +22,6 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private  val homeViewModel: HomeViewModel by viewModels()
-    //private lateinit var adapter: HomeAdapter
     private lateinit var pagingAdapter: NewsPagingAdapter
     private var newsList: MutableList<NewsModel> = mutableListOf()
     private var selectedCategory: String? = null
@@ -45,11 +39,16 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.toolbar.tvTitle.text = getText(R.string.title_home)
-        pagingAdapter = NewsPagingAdapter()
+        pagingAdapter = NewsPagingAdapter(
+            onItemClick = { newsItem ->
+                findNavController().navigate(R.id.actionHomeFragmentToDetailFragment)
+            },
+            addOrRemoveFavoriteListener = { newsItem, isFavorite ->
+                homeViewModel.addOrRemove(newsItem, isFavorite)
+            }
+        )
         binding.rvNews.adapter = pagingAdapter
-        val pagingAdapter = NewsPagingAdapter { newsItem ->
-            findNavController().navigate(R.id.actionHomeFragmentToDetailFragment)
-        }
+
         lifecycleScope.launch {
             homeViewModel.getNews("general").collectLatest { pagingData ->
                 pagingAdapter.submitData(pagingData)

@@ -31,46 +31,11 @@ class HomeViewModel @Inject constructor(
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
     private var _newsPagingData: Flow<PagingData<NewsModel>>? = null
 
-    //TODO ItemClick ve Favori durumu çalışmıyor.
-
-    fun fetchNews(category: String? = null) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val favNews = localRepository.getFavoriteList()
-                val categories = category?.let { listOf(it) } ?: listOf(
-                    "general",
-                    "sport",
-                    "economy",
-                    "technology"
-                )
-                val allNews = mutableListOf<NewsModel>()
-
-                for (cat in categories) {
-                    val response = apiService.getNewsList(cat,4)
-                    response.body()?.let {
-                        if (it.success) {
-                            allNews.addAll(it.result)
-                        }
-                    }
-                }
-
-                if (favNews != null) {
-                    for (news in allNews) {
-                        news.isFavorite = favNews.any { it.name == news.name }
-                    }
-                }
-
-                _eventFetchNews.postValue(allNews)
-            } catch (e: Exception) {
-                println(e)
-            }
-        }
-    }
 
     fun getNews(category: String): Flow<PagingData<NewsModel>> {
         return Pager(
             config = PagingConfig(pageSize = 20),
-            pagingSourceFactory = { NewsPagingSource(apiService, category) }
+            pagingSourceFactory = { NewsPagingSource(apiService, category, localRepository, isFavoritesMode = false) }
         ).flow.cachedIn(viewModelScope)
     }
 
