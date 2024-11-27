@@ -30,7 +30,7 @@ class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
-    //TODO: Favoriden çıkarınca çıkıyor ama liste güncellenmiyor, bir de api request hakkı doldu.
+    //TODO: Favoriden çıkarınca çıkıyor ama liste güncellenmiyor.
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

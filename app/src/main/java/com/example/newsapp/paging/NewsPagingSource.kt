@@ -1,6 +1,5 @@
 package com.example.newsapp.paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.newsapp.model.NewsModel

@@ -32,36 +32,6 @@ class FavoritesViewModel @Inject constructor(
 
 
     private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
-    val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
-    private lateinit var favoriteListAdapter: NewsPagingAdapter
-
-    fun getData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val categories = listOf("general", "sport", "economy", "technology")
-                val allNews = mutableListOf<NewsModel>()
-
-                for (category in categories) {
-                    val response: Response<NewsResponseModel> = apiService.getNewsList(category,20)
-                    if (response.isSuccessful) {
-                        val newsResponse = response.body()
-                        newsResponse?.let { newsList ->
-                            allNews.addAll(newsList.result)
-                        }
-                    }
-                }
-                if (allNews.isEmpty()) {
-                    eventFetchNews.postValue(null)
-                } else {
-                    val updatedNewsList = localRepository.getFavoriteNews(allNews)
-                    eventFetchNews.postValue(updatedNewsList)
-                }
-
-            } catch (e: Exception) {
-                println(e)
-            }
-        }
-    }
 
     fun getFavoriteNews(): Flow<PagingData<NewsModel>> {
         return Pager(
@@ -77,6 +47,7 @@ class FavoritesViewModel @Inject constructor(
             }
             if (isAdd) {
                 news.isFavorite = true
+                news.addedAt = System.currentTimeMillis()
                 localRepository.add(news)
             } else {
                 news.isFavorite = false

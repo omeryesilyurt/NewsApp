@@ -12,6 +12,7 @@ import com.example.newsapp.databinding.FragmentSearchBinding
 import com.example.newsapp.model.NewsModel
 import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null

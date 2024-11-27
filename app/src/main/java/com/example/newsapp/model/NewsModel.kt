@@ -41,5 +41,9 @@ data class NewsModel (
     val source: String?,
 
     @ColumnInfo(name = "is_favorite")
-    var isFavorite: Boolean? = false
+    var isFavorite: Boolean? = false,
+
+    @SerializedName("addedAt")
+    @ColumnInfo(name = "addedAt")
+    var addedAt:Long = System.currentTimeMillis()
 ): Serializable

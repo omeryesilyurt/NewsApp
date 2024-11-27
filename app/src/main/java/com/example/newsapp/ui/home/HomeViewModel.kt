@@ -24,18 +24,25 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val localRepository: LocalRepository,
     private val apiService: ApiService,
-    private val pagingRepository: NewsPagingRepository
 ) :
     ViewModel() {
     private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
     val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
     private var _newsPagingData: Flow<PagingData<NewsModel>>? = null
+    var selectedCategory: String? = null
 
 
     fun getNews(category: String): Flow<PagingData<NewsModel>> {
         return Pager(
             config = PagingConfig(pageSize = 20),
-            pagingSourceFactory = { NewsPagingSource(apiService, category, localRepository, isFavoritesMode = false) }
+            pagingSourceFactory = {
+                NewsPagingSource(
+                    apiService,
+                    category,
+                    localRepository,
+                    isFavoritesMode = false
+                )
+            }
         ).flow.cachedIn(viewModelScope)
     }
 
@@ -46,6 +53,7 @@ class HomeViewModel @Inject constructor(
             }
             if (isAdd) {
                 news.isFavorite = true
+                news.addedAt = System.currentTimeMillis()
                 localRepository.add(news)
             } else {
                 news.isFavorite = false

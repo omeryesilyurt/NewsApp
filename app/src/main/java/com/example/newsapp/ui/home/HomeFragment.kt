@@ -15,16 +15,15 @@ import com.example.newsapp.paging.NewsPagingAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private  val homeViewModel: HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var pagingAdapter: NewsPagingAdapter
-    private var newsList: MutableList<NewsModel> = mutableListOf()
-    private var selectedCategory: String? = null
 
 
     override fun onCreateView(
@@ -41,74 +40,68 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
         binding.toolbar.tvTitle.text = getText(R.string.title_home)
         pagingAdapter = NewsPagingAdapter(
             onItemClick = { newsItem ->
-                findNavController().navigate(R.id.actionHomeFragmentToDetailFragment)
+                if (newsItem.newsId == null) {
+                    newsItem.newsId = UUID.randomUUID()
+                }
+                val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment()
+                val bundle = Bundle().apply {
+                    putSerializable("selectedNews", newsItem)
+                }
+                findNavController().navigate(action.actionId, bundle)
             },
             addOrRemoveFavoriteListener = { newsItem, isFavorite ->
                 homeViewModel.addOrRemove(newsItem, isFavorite)
             }
         )
         binding.rvNews.adapter = pagingAdapter
+        clickEvents()
+        updateNews("general")
 
-        lifecycleScope.launch {
-            homeViewModel.getNews("general").collectLatest { pagingData ->
-                pagingAdapter.submitData(pagingData)
+    }
+
+    private fun clickEvents() {
+        binding.apply {
+            btnGeneral.setOnClickListener {
+                highlightButton(
+                    binding.btnGeneral,
+                    binding.btnSport,
+                    binding.btnEconomy,
+                    binding.btnTechnology
+                )
+                homeViewModel.selectedCategory = "general"
+                updateNews("general")
+            }
+            btnSport.setOnClickListener {
+                highlightButton(
+                    binding.btnSport,
+                    binding.btnGeneral,
+                    binding.btnEconomy,
+                    binding.btnTechnology
+                )
+                homeViewModel.selectedCategory = "sport"
+                updateNews("sport")
+            }
+            btnEconomy.setOnClickListener {
+                highlightButton(
+                    binding.btnEconomy,
+                    binding.btnGeneral,
+                    binding.btnSport,
+                    binding.btnTechnology
+                )
+                homeViewModel.selectedCategory = "economy"
+                updateNews("economy")
+            }
+            btnTechnology.setOnClickListener {
+                highlightButton(
+                    binding.btnTechnology,
+                    binding.btnGeneral,
+                    binding.btnSport,
+                    binding.btnEconomy
+                )
+                homeViewModel.selectedCategory = "technology"
+                updateNews("technology")
             }
         }
-
-
-/*        adapter = HomeAdapter(newsList, { selectedNews ->
-            if (selectedNews.newsId == null) {
-                selectedNews.newsId = UUID.randomUUID()
-            }
-            val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment()
-            val bundle = Bundle().apply {
-                putSerializable("selectedNews", selectedNews)
-            }
-            findNavController().navigate(action.actionId, bundle)
-        }, this)*/
-
-        binding.btnGeneral.setOnClickListener {
-            highlightButton(
-                binding.btnGeneral,
-                binding.btnSport,
-                binding.btnEconomy,
-                binding.btnTechnology
-            )
-            selectedCategory = "general"
-            updateNews("general")
-        }
-        binding.btnSport.setOnClickListener {
-            highlightButton(
-                binding.btnSport,
-                binding.btnGeneral,
-                binding.btnEconomy,
-                binding.btnTechnology
-            )
-            selectedCategory = "sport"
-
-            updateNews("sport")
-        }
-        binding.btnEconomy.setOnClickListener {
-            highlightButton(
-                binding.btnEconomy,
-                binding.btnGeneral,
-                binding.btnSport,
-                binding.btnTechnology
-            )
-            selectedCategory = "economy"
-            updateNews("economy")
-        }
-        binding.btnTechnology.setOnClickListener {
-            highlightButton(
-                binding.btnTechnology,
-                binding.btnGeneral,
-                binding.btnSport,
-                binding.btnEconomy
-            )
-            selectedCategory = "technology"
-            updateNews("technology")
-        }
-
     }
 
     private fun highlightButton(selectedButton: View, vararg otherButtons: View) {
@@ -121,7 +114,8 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
             homeViewModel.getNews(category).collectLatest { pagingData ->
                 pagingAdapter.submitData(pagingData)
             }
-        }}
+        }
+    }
 
 
     override fun onAddOrRemoveFavorite(news: NewsModel, isAdd: Boolean) {
