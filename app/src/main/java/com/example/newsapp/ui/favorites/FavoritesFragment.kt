@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.TypedArrayUtils.getText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,12 +13,13 @@ import com.example.newsapp.databinding.FragmentFavoritesBinding
 import com.example.newsapp.ui.home.AddOrRemoveFavoriteListener
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.paging.NewsPagingAdapter
+import com.example.newsapp.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
+class FavoritesFragment : BaseFragment(), AddOrRemoveFavoriteListener {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
     private val favoriteViewModel: FavoritesViewModel by viewModels()
@@ -40,11 +42,7 @@ class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
             })
         binding.toolbar.tvTitle.text = getText(R.string.title_fav)
         binding.rvFavNews.adapter = favoriteListAdapter
-        lifecycleScope.launch {
-            favoriteViewModel.getFavoriteNews().collectLatest { pagingData ->
-                favoriteListAdapter.submitData(pagingData)
-            }
-        }
+        getFavorites()
     }
 
     override fun onDestroyView() {
@@ -58,5 +56,13 @@ class FavoritesFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     override fun onAddOrRemoveFavorite(news: NewsModel, isAdd: Boolean) {
         favoriteViewModel.addOrRemove(news, isAdd)
+    }
+
+    private fun getFavorites(){
+        lifecycleScope.launch {
+            favoriteViewModel.getFavoriteNews().collectLatest { pagingData ->
+                favoriteListAdapter.submitData(pagingData)
+            }
+        }
     }
 }

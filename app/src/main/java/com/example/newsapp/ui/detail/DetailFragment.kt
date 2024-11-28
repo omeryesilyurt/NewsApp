@@ -6,14 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.res.TypedArrayUtils.getText
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentDetailBinding
 import com.example.newsapp.model.NewsModel
+import com.example.newsapp.ui.base.BaseFragment
 
-class DetailFragment : Fragment() {
+class DetailFragment : BaseFragment() {
 
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!

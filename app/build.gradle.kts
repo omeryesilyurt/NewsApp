@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.navigation.fragment)
     implementation(libs.paging.runtime)
+    implementation(libs.lottie)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

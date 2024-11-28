@@ -12,13 +12,14 @@ import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.paging.NewsPagingAdapter
+import com.example.newsapp.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
+class HomeFragment : BaseFragment(), AddOrRemoveFavoriteListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -54,9 +55,10 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
             }
         )
         binding.rvNews.adapter = pagingAdapter
-        clickEvents()
+        lottieLoading = view.findViewById(R.id.lottieLoading)
+        showLoadingOnce(binding.lottieLoading)
         updateNews("general")
-
+        clickEvents()
     }
 
     private fun clickEvents() {
@@ -68,6 +70,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                     binding.btnEconomy,
                     binding.btnTechnology
                 )
+                showLoadingOnce(binding.lottieLoading)
                 homeViewModel.selectedCategory = "general"
                 updateNews("general")
             }
@@ -78,6 +81,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                     binding.btnEconomy,
                     binding.btnTechnology
                 )
+                showLoadingOnce(binding.lottieLoading)
                 homeViewModel.selectedCategory = "sport"
                 updateNews("sport")
             }
@@ -88,6 +92,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                     binding.btnSport,
                     binding.btnTechnology
                 )
+                showLoadingOnce(binding.lottieLoading)
                 homeViewModel.selectedCategory = "economy"
                 updateNews("economy")
             }
@@ -98,6 +103,7 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
                     binding.btnSport,
                     binding.btnEconomy
                 )
+                showLoadingOnce(binding.lottieLoading)
                 homeViewModel.selectedCategory = "technology"
                 updateNews("technology")
             }
@@ -124,11 +130,8 @@ class HomeFragment : Fragment(), AddOrRemoveFavoriteListener {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
-            homeViewModel.getNews("general").collectLatest { pagingData ->
-                pagingAdapter.submitData(pagingData)
-            }
-        }
+        showLoadingOnce(binding.lottieLoading)
+        updateNews("general")
 
     }
 

@@ -5,15 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentSearchBinding
-import com.example.newsapp.model.NewsModel
+import com.example.newsapp.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SearchFragment : Fragment() {
+class SearchFragment : BaseFragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!

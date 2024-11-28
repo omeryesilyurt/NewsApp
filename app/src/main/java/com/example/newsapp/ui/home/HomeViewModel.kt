@@ -1,7 +1,6 @@
 package com.example.newsapp.ui.home
 
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -10,7 +9,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.newsapp.model.NewsModel
 import com.example.newsapp.network.ApiService
-import com.example.newsapp.paging.NewsPagingRepository
 import com.example.newsapp.paging.NewsPagingSource
 import com.example.newsapp.repository.LocalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,9 +24,6 @@ class HomeViewModel @Inject constructor(
     private val apiService: ApiService,
 ) :
     ViewModel() {
-    private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
-    val eventFetchNews: MutableLiveData<List<NewsModel>?> get() = _eventFetchNews
-    private var _newsPagingData: Flow<PagingData<NewsModel>>? = null
     var selectedCategory: String? = null
 
 
