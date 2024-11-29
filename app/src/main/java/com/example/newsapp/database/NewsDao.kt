@@ -10,14 +10,13 @@ import com.example.newsapp.model.NewsModel
 interface NewsDao {
 
     @Query("SELECT * FROM dbNews ORDER BY addedAt DESC")
-    fun getAllFavoriteNews(): List<NewsModel>
+    suspend fun getAllFavoriteNews(): List<NewsModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addFavorite(favNews: NewsModel)
+    suspend fun addFavorite(favNews: NewsModel)
 
     @Query("DELETE FROM dbNews WHERE name = :name")
-    fun removeFavorite(name: String)
-
+    suspend fun removeFavorite(name: String)
 
 
 }

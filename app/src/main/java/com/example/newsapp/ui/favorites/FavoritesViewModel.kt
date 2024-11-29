@@ -31,7 +31,7 @@ class FavoritesViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val _eventFetchNews = MutableLiveData<List<NewsModel>?>()
+     val eventFetchNews = MutableLiveData<List<NewsModel>?>()
 
     fun getFavoriteNews(): Flow<PagingData<NewsModel>> {
         return Pager(
@@ -53,7 +53,8 @@ class FavoritesViewModel @Inject constructor(
                 news.isFavorite = false
                 localRepository.remove(news)
             }
+            eventFetchNews.postValue(localRepository.getFavoriteList())
+
         }
-        _eventFetchNews.postValue(localRepository.getFavoriteList())
     }
 }

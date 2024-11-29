@@ -8,6 +8,7 @@ import androidx.core.content.res.TypedArrayUtils.getText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentFavoritesBinding
 import com.example.newsapp.ui.home.AddOrRemoveFavoriteListener
@@ -32,7 +33,6 @@ class FavoritesFragment : BaseFragment(), AddOrRemoveFavoriteListener {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
-    //TODO: Favoriden çıkarınca çıkıyor ama liste güncellenmiyor.
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,6 +43,14 @@ class FavoritesFragment : BaseFragment(), AddOrRemoveFavoriteListener {
         binding.toolbar.tvTitle.text = getText(R.string.title_fav)
         binding.rvFavNews.adapter = favoriteListAdapter
         getFavorites()
+
+        favoriteViewModel.eventFetchNews.observe(viewLifecycleOwner) {
+            it?.let { list ->
+                lifecycleScope.launch {
+                    favoriteListAdapter.submitData(PagingData.from(list))
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -52,13 +60,14 @@ class FavoritesFragment : BaseFragment(), AddOrRemoveFavoriteListener {
 
     override fun onResume() {
         super.onResume()
+        getFavorites()
     }
 
     override fun onAddOrRemoveFavorite(news: NewsModel, isAdd: Boolean) {
         favoriteViewModel.addOrRemove(news, isAdd)
     }
 
-    private fun getFavorites(){
+    private fun getFavorites() {
         lifecycleScope.launch {
             favoriteViewModel.getFavoriteNews().collectLatest { pagingData ->
                 favoriteListAdapter.submitData(pagingData)

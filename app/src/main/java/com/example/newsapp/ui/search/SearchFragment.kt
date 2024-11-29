@@ -8,6 +8,7 @@ import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentSearchBinding
+import com.example.newsapp.paging.NewsPagingAdapter
 import com.example.newsapp.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +18,7 @@ class SearchFragment : BaseFragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private val searchViewModel: SearchViewModel by viewModels()
-    private lateinit var adapter: SearchAdapter
+    private lateinit var adapter: NewsPagingAdapter
 
 
     override fun onCreateView(
@@ -32,14 +33,14 @@ class SearchFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.toolbar.tvTitle.text = getText(R.string.title_search)
-        adapter = SearchAdapter()
+        adapter = NewsPagingAdapter()
         binding.rvSearchNews.adapter = adapter
         searchViewModel.eventFetchNews.observe(viewLifecycleOwner) { filteredList ->
             if (filteredList != null) {
-                adapter.updateList(filteredList)
+                adapter.updateSearchList(filteredList)
             }
         }
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchViewModel.getData(query)
                 return false

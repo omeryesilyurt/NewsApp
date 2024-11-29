@@ -1,7 +1,10 @@
 package com.example.newsapp.paging
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -10,17 +13,21 @@ import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.databinding.ItemNewsBinding
 import com.example.newsapp.model.NewsModel
+import java.util.Locale
 
 class NewsPagingAdapter(
-    private val onItemClick: (NewsModel) -> Unit = {},
-    private val addOrRemoveFavoriteListener: (NewsModel, Boolean) -> Unit
+    private val onItemClick: ((NewsModel) -> Unit)? = null,
+    private val addOrRemoveFavoriteListener: ((NewsModel, Boolean) -> Unit)? = null,
+    private var fullList: MutableList<NewsModel>? = null,
+    private var itemList: MutableList<NewsModel>? = null
+
 ) :
-    PagingDataAdapter<NewsModel, NewsPagingAdapter.NewsViewHolder>(NewsDiffCallback()) {
+    PagingDataAdapter<NewsModel, NewsPagingAdapter.NewsViewHolder>(NewsDiffCallback()), Filterable {
 
     class NewsViewHolder(
         private val binding: ItemNewsBinding,
-        private val onItemClick: (NewsModel) -> Unit,
-        private val addOrRemoveFavoriteListener: (NewsModel, Boolean) -> Unit
+        private val onItemClick: ((NewsModel) -> Unit)? = null,
+        private val addOrRemoveFavoriteListener: ((NewsModel, Boolean) -> Unit)? = null
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -32,7 +39,7 @@ class NewsPagingAdapter(
                     tvDescription.text = it.description
                     loadImage(it, imgNews)
                     itemView.setOnClickListener {
-                        onItemClick(news)
+                        onItemClick?.let { it1 -> it1(news) }
                     }
 
                     if (it.isFavorite == true) {
@@ -48,7 +55,7 @@ class NewsPagingAdapter(
                         } else {
                             btnFav.setImageResource(R.drawable.ic_mark_unchecked)
                         }
-                        addOrRemoveFavoriteListener(news, newFavoriteStatus)
+                        addOrRemoveFavoriteListener?.let { it1 -> it1(news, newFavoriteStatus) }
                     }
                 }
             }
@@ -87,5 +94,41 @@ class NewsPagingAdapter(
             return oldItem == newItem
         }
 
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateSearchList(newList: List<NewsModel>) {
+        fullList?.clear()
+        fullList?.addAll(newList)
+        itemList?.clear()
+        itemList?.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val filteredList = if (constraint.isNullOrEmpty()) {
+                    fullList
+                } else {
+                    val query = constraint.toString().lowercase(Locale.getDefault()).trim()
+                    fullList?.filter { news ->
+                        (news.name?.lowercase(Locale.getDefault())?.contains(query) == true)
+                    }?.toMutableList()
+                }
+                return FilterResults().apply { values = filteredList }
+            }
+
+
+            @SuppressLint("NotifyDataSetChanged")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                itemList?.clear()
+                if (results?.values != null) {
+                    itemList?.addAll(results.values as List<NewsModel>)
+                }
+                notifyDataSetChanged()
+            }
+
+        }
     }
 }
