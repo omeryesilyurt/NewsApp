@@ -17,12 +17,9 @@ import java.util.Locale
 
 class NewsPagingAdapter(
     private val onItemClick: ((NewsModel) -> Unit)? = null,
-    private val addOrRemoveFavoriteListener: ((NewsModel, Boolean) -> Unit)? = null,
-    private var fullList: MutableList<NewsModel>? = null,
-    private var itemList: MutableList<NewsModel>? = null
-
+    private val addOrRemoveFavoriteListener: ((NewsModel, Boolean) -> Unit)? = null
 ) :
-    PagingDataAdapter<NewsModel, NewsPagingAdapter.NewsViewHolder>(NewsDiffCallback()), Filterable {
+    PagingDataAdapter<NewsModel, NewsPagingAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
     class NewsViewHolder(
         private val binding: ItemNewsBinding,
@@ -94,41 +91,5 @@ class NewsPagingAdapter(
             return oldItem == newItem
         }
 
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateSearchList(newList: List<NewsModel>) {
-        fullList?.clear()
-        fullList?.addAll(newList)
-        itemList?.clear()
-        itemList?.addAll(newList)
-        notifyDataSetChanged()
-    }
-
-    override fun getFilter(): Filter {
-        return object : Filter() {
-            override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val filteredList = if (constraint.isNullOrEmpty()) {
-                    fullList
-                } else {
-                    val query = constraint.toString().lowercase(Locale.getDefault()).trim()
-                    fullList?.filter { news ->
-                        (news.name?.lowercase(Locale.getDefault())?.contains(query) == true)
-                    }?.toMutableList()
-                }
-                return FilterResults().apply { values = filteredList }
-            }
-
-
-            @SuppressLint("NotifyDataSetChanged")
-            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                itemList?.clear()
-                if (results?.values != null) {
-                    itemList?.addAll(results.values as List<NewsModel>)
-                }
-                notifyDataSetChanged()
-            }
-
-        }
     }
 }

@@ -35,19 +35,25 @@ class SearchFragment : BaseFragment() {
         binding.toolbar.tvTitle.text = getText(R.string.title_search)
         adapter = NewsPagingAdapter()
         binding.rvSearchNews.adapter = adapter
-        searchViewModel.eventFetchNews.observe(viewLifecycleOwner) { filteredList ->
-            if (filteredList != null) {
-                adapter.updateSearchList(filteredList)
-            }
-        }
+
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                searchViewModel.getData(query)
+                query?.let {nonNullQuery ->
+                    searchViewModel.searchPagingData(nonNullQuery, "general")
+                        .observe(viewLifecycleOwner) { pagingData ->
+                            adapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
+                        }
+                }
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                searchViewModel.getData(newText)
+                newText?.let { nonNullQuery ->
+                    searchViewModel.searchPagingData(nonNullQuery, "general")
+                        .observe(viewLifecycleOwner) { pagingData ->
+                            adapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
+                        }
+                }
                 return true
             }
 

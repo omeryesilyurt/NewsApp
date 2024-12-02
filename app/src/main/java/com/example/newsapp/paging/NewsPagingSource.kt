@@ -10,6 +10,7 @@ class NewsPagingSource(
     private val apiService: ApiService,
     private val category: String,
     private val localRepository: LocalRepository,
+    private val query: String? = null,
     private val isFavoritesMode: Boolean = false
 ) :
     PagingSource<Int, NewsModel>() {
@@ -29,6 +30,13 @@ class NewsPagingSource(
             } else {
                 val response = apiService.getNewsList(tag = category, paging = page)
                 response.body()?.result ?: emptyList()
+                val fetchedList = response.body()?.result ?: emptyList()
+
+                if (!query.isNullOrEmpty()) {
+                    fetchedList.filter { it.name?.contains(query, ignoreCase = true) == true }
+                } else {
+                    fetchedList
+                }
             }
 
             val favoriteNews = localRepository.getFavoriteList()
