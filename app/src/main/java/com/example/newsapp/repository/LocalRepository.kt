@@ -20,14 +20,4 @@ class LocalRepository(context: Context) {
         return newsDB?.NewsDao()?.getAllFavoriteNews()
     }
 
-    suspend fun getFavoriteNews(newsList: List<NewsModel>): List<NewsModel> {
-        val favoriteNews = newsDB?.NewsDao()?.getAllFavoriteNews()
-        return if (favoriteNews != null) {
-            newsList.filter { newsItem ->
-                favoriteNews.any { it.name == newsItem.name }
-            }
-        } else {
-            emptyList()
-        }
-    }
 }

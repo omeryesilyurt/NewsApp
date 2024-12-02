@@ -24,13 +24,19 @@ class FavoritesViewModel @Inject constructor(
     private val apiService: ApiService
 ) : ViewModel() {
 
-
-     val eventFetchNews = MutableLiveData<List<NewsModel>?>()
+    val eventFetchNews = MutableLiveData<List<NewsModel>?>()
 
     fun getFavoriteNews(): Flow<PagingData<NewsModel>> {
         return Pager(
             config = PagingConfig(pageSize = 20),
-            pagingSourceFactory = { NewsPagingSource(apiService, category = "favorites",localRepository,isFavoritesMode = true) }
+            pagingSourceFactory = {
+                NewsPagingSource(
+                    apiService,
+                    category = "favorites",
+                    localRepository,
+                    isFavoritesMode = true
+                )
+            }
         ).flow.cachedIn(viewModelScope)
     }
 
