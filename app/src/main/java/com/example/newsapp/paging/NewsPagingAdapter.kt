@@ -1,10 +1,7 @@
 package com.example.newsapp.paging
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import android.widget.ImageView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -13,7 +10,6 @@ import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.databinding.ItemNewsBinding
 import com.example.newsapp.model.NewsModel
-import java.util.Locale
 
 class NewsPagingAdapter(
     private val onItemClick: ((NewsModel) -> Unit)? = null,
