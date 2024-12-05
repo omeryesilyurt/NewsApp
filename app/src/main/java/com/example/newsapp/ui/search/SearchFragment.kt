@@ -20,7 +20,6 @@ class SearchFragment : BaseFragment() {
     private val searchViewModel: SearchViewModel by viewModels()
     private lateinit var adapter: NewsPagingAdapter
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,32 +31,36 @@ class SearchFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.toolbar.tvTitle.text = getText(R.string.title_search)
         adapter = NewsPagingAdapter()
-        binding.rvSearchNews.adapter = adapter
-
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let {nonNullQuery ->
-                    searchViewModel.searchPagingData(nonNullQuery, "general")
-                        .observe(viewLifecycleOwner) { pagingData ->
-                            adapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
-                        }
-                }
-                return false
+        binding.apply {
+            toolbar.tvTitle.text = getText(R.string.title_search)
+            rvSearchNews.adapter = adapter
+            layoutSearch.setOnClickListener {
+                searchView.isIconified = false
             }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { nonNullQuery ->
-                    searchViewModel.searchPagingData(nonNullQuery, "general")
-                        .observe(viewLifecycleOwner) { pagingData ->
-                            adapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
-                        }
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    query?.let { nonNullQuery ->
+                        searchViewModel.searchPagingData(nonNullQuery, "general")
+                            .observe(viewLifecycleOwner) { pagingData ->
+                                adapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
+                            }
+                    }
+                    return false
                 }
-                return true
-            }
 
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    newText?.let { nonNullQuery ->
+                        searchViewModel.searchPagingData(nonNullQuery, "general")
+                            .observe(viewLifecycleOwner) { pagingData ->
+                                adapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
+                            }
+                    }
+                    return true
+                }
+
+            })
+        }
     }
 
     override fun onDestroyView() {
